@@ -17,4 +17,4 @@ Enable-WindowsOptionalFeature -Online -FeatureName Containers -Confirm:$false
 
 # chocolatey
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-wget -UseBasicParsing https://community.chocolatey.org/install.ps1 | iex
+(wget -UseBasicParsing https://community.chocolatey.org/install.ps1).content | iex
