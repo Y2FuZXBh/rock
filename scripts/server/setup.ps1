@@ -18,3 +18,7 @@ Enable-WindowsOptionalFeature -Online -FeatureName Containers -NoRestart
 # chocolatey
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
 (wget -UseBasicParsing https://community.chocolatey.org/install.ps1).content | iex
+
+# circleci
+choco install circleci-cli -y
+circleci update
