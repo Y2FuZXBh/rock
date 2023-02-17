@@ -1,11 +1,14 @@
 # CircleCI - Runner
 
 # install
-choco install circleci-cli -y
+choco install -y git gh circleci-cli
 
 # update
 circleci update
 
-# setup
-# ./runner.yml
-#circleci setup --no-prompt --host x --token y
+# pass user read token
+# auth through git 
+# pull secret with gh
+# copy & replace template(s)
+
+# setup circleci connection
