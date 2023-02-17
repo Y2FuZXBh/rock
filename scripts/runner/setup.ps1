@@ -1,10 +1,11 @@
 # CircleCI - Runner
-## https://circleci.com/docs/runner-overview/
-$install = https://raw.githubusercontent.com/CircleCI-Public/runner-installation-files/main/windows-install/Install-CircleCIRunner.ps1
-$uninstall = https://raw.githubusercontent.com/CircleCI-Public/runner-installation-files/main/windows-install/Uninstall-CircleCIRunner.ps1
 
-Set-ExecutionPolicy Bypass -Scope Process -Force
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+# install
+choco install circleci-cli -y
 
-iex 
-#Invoke-WebRequest -UseBasicParsing -Uri $runner_install
+# update
+circleci update
+
+# setup - https://circleci.com/docs/runner-config-reference
+# ./runner.yml
+#circleci setup --no-prompt --host x --token y

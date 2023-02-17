@@ -1,0 +1,12 @@
+api:
+  url: https://circleci.com #https://circleci.com/docs/runner-config-reference/#api-url
+  auth_token: TOKEN #https://circleci.com/docs/runner-config-reference/#api-auth-token
+runner:
+  mode: continuous #https://circleci.com/docs/runner-config-reference/#runner-mode
+  name: NAME #https://circleci.com/docs/runner-config-reference/#runner-name
+  working_directory: WORKING_DIR/%s #https://circleci.com/docs/runner-config-reference/#runner-working-directory
+  cleanup_working_directory: true #https://circleci.com/docs/runner-config-reference/#runner-cleanup-working-directory
+  max_run_time: 10m #https://circleci.com/docs/runner-config-reference/#runner-max-run-time
+  #command_prefix: ["sudo", "-niHu", "USERNAME", "--"] #https://circleci.com/docs/runner-config-reference/#runner-command-prefix
+logging:
+  file: LOG_PATH/circleci-runner.log #https://circleci.com/docs/runner-config-reference/#logging-file

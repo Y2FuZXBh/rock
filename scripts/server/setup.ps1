@@ -23,6 +23,7 @@ choco upgrade chocolatey
 # circleci
 choco install circleci-cli -y
 circleci update
+#circleci setup --no-prompt --host x --token y
 
 # check for updates
 choco upgrade all
