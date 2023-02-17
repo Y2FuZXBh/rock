@@ -10,7 +10,7 @@ Get-WUInstall –MicrosoftUpdate –AcceptAll
 
 # install docker
 Install-Package -Name docker -ProviderName DockerMsftProvider -Update -Confirm:$false
-Enable-WindowsOptionalFeature -Online -FeatureName Containers -Confirm:$false
+Enable-WindowsOptionalFeature -Online -FeatureName Containers -NoRestart
 
 # add windows reboot check here
 #Restart-Computer -Force
