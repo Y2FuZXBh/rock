@@ -97,12 +97,14 @@ function Test-Reboot {
     foreach ($test in $tests) {
         if (& $test) {
             #Write-Host $test.ToString()
-            $true
+            return $true
             break
         }
     }
+    return $false
 }
 
+## main
 Get-WUInstall –MicrosoftUpdate –AcceptAll
 choco upgrade chocolatey
 choco upgrade all
