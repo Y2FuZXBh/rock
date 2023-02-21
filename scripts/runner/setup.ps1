@@ -14,3 +14,4 @@ gc Z:\share\pat.txt | gh auth login --with-token $_
 
 # setup circleci connection (add this with built-in token+name)
 (wget -UseBasicParsing https://raw.githubusercontent.com/CircleCI-Public/runner-installation-files/main/windows-install/Install-CircleCIRunner.ps1).content | iex
+
