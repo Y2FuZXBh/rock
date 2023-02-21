@@ -112,8 +112,8 @@ circleci update
 
 # test for reboot
 if(Test-Reboot){
-    Write-Output "Reboot"
+    Write-Output "Reboot: True"
 }
 else{
-    Write-Output "Skip"
+    Write-Output "Reboot: False"
 }
