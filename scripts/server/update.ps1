@@ -112,8 +112,9 @@ circleci update
 
 # test for reboot
 if(Test-Reboot){
-    Write-Output "Reboot: True"
+    Write-Output "Reboot Required"
+    Restart-Computer -Force
 }
 else{
-    Write-Output "Reboot: False"
+    Write-Output "Updates are Complete"
 }
