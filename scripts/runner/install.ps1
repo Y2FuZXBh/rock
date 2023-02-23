@@ -106,24 +106,16 @@ $keeperTask = Register-ScheduledTask -Force -TaskName "CircleCI Launch Agent ses
 Write-Host "Preparing a config template for CircleCI Launch Agent"
 @"
   api:
-    auth_token: "" # FIXME: Specify your runner token
-    # On server, set url to the hostname of your server installation. For example,
-    # url: https://circleci.example.com
+    url: https://runner.circleci.com
+    auth_token: $(gc Z:\share\circleci.txt)
   runner:
-    name: "" # FIXME: Specify the name of this runner instance
+    name: $($env:COMPUTERNAME.ToLower())
     mode: single-task
-    working_directory: $env:ProgramFiles\CircleCI\Workdir
+    working_directory: $env:ProgramFiles\CircleCI\temp\%s
     cleanup_working_directory: true
   logging:
-    file: $installDirPath\circleci-runner.log
-"@ -replace "([^`r])`n", "`$1`r`n" | Out-File launch-agent-config.yaml -Encoding ascii
-  
-# Open launch-agent-config.yaml for edit
-Write-Host "Opening the config file for CircleCI Launch Agent in Notepad"
-Write-Host ""
-Write-Host "Please edit the file accordingly and close Notepad"
-  (Start-Process notepad.exe -ArgumentList ("`"$installDirPath\launch-agent-config.yaml`"") -PassThru).WaitForExit()
-Write-Host ""
+    file: $env:ProgramFiles\CircleCI\circleci-runner.log
+"@ -replace "([^`r])`n", "`$1`r`n" | Out-File $env:ProgramFiles\CircleCI\launch-agent-config.yaml -Encoding unicode -Force
   
 # Start runner!
 Write-Host "Starting CircleCI Launch Agent"

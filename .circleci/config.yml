@@ -6,6 +6,6 @@ workflows:
 jobs:
   runner-test:
     machine: true
-    resource_class: y2fuzxbh/server22
+    resource_class: y2fuzxbh/tester
     steps:
       - run: echo "Hi I'm on Runners!"
