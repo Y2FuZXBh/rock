@@ -7,7 +7,7 @@ RUN powershell -Command `\
     Start-Service wuauserv; `\
     Import-Module WebAdministration; `\
     Set-ItemProperty IIS:\AppPools\DefaultAppPool -name processModel.identityType -value 0; `\
-    Invoke-WebRequest -UseBasicParsing -Uri "https://dotnetbinaries.blob.core.windows.net/servicemonitor/2.0.1.10/ServiceMonitor.exe" -OutFile "C:\ServiceMonitor.exe"
+    Invoke-WebRequest -UseBasicParsing "https://dotnetbinaries.blob.core.windows.net/servicemonitor/2.0.1.10/ServiceMonitor.exe" -OutFile "C:\ServiceMonitor.exe"
 
 WORKDIR /inetpub/wwwroot
 
