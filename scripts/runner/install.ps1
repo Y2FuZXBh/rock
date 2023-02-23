@@ -109,7 +109,7 @@ Write-Host "Preparing a config template for CircleCI Launch Agent"
     url: https://runner.circleci.com
     auth_token: $(gc Z:\share\circleci.txt)
   runner:
-    name: $($env:COMPUTERNAME.ToLower())
+    name: runner
     mode: single-task
     working_directory: $env:ProgramFiles\CircleCI\temp\%s
     cleanup_working_directory: true
