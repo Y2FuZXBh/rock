@@ -1,4 +1,4 @@
-function Random-Password($length, $minNonAlpha) {
+function New-Password($length, $minNonAlpha) {
     $alpha = [char]65..[char]90 + [char]97..[char]122
     $numeric = [char]48..[char]57
     # :;<=>?@!#$%&()*+,-./[\]^_`
@@ -20,59 +20,40 @@ function Random-Password($length, $minNonAlpha) {
     # a bug on Server 2016 joins as stringified integers unles we cast to [char[]]
     ([char[]] $pwdList) -join ""
 }
-  
-$ErrorActionPreference = "Stop"
-  
+
+$USERNAME = "circleci"
+$AUTH_TOKEN = gc Z:\share\circleci.txt
 $platform = "windows/amd64"
 $installDirPath = "$env:ProgramFiles\CircleCI"
-  
-# Install Chocolatey
-Write-Host "Installing Chocolatey as a prerequisite"
-Invoke-Expression ((Invoke-WebRequest "https://chocolatey.org/install.ps1").Content)
-Write-Host ""
-  
+
 # Install Git
-Write-Host "Installing Git, which is required to run CircleCI jobs"
-choco install -y git --params "/GitAndUnixToolsOnPath"
-Write-Host ""
-  
-# Install Gzip
-Write-Host "Installing Gzip, which is required to run CircleCI jobs"
+choco install -y git --params "'/GitAndUnixToolsOnPath'"
 choco install -y gzip
-Write-Host ""
-  
-Write-Host "Installing CircleCI Launch Agent to $installDirPath"
-  
+    
 # mkdir
 [void](New-Item "$installDirPath" -ItemType Directory -Force)
 Push-Location "$installDirPath"
   
 # Download launch-agent
 $agentDist = "https://circleci-binary-releases.s3.amazonaws.com/circleci-launch-agent"
-Write-Host "Determining latest version of CircleCI Launch Agent"
-$agentVer = (Invoke-WebRequest "$agentDist/release.txt").Content.Trim()
-Write-Host "Using CircleCI Launch Agent version $agentVer"
-Write-Host "Downloading and verifying CircleCI Launch Agent Binary"
-$agentChecksum = ((Invoke-WebRequest "$agentDist/$agentVer/checksums.txt").Content.Split("`n") | Select-String $platform).Line.Split(" ")
+$agentVer = (Invoke-WebRequest -UseBasicParsing "$agentDist/release.txt").Content.Trim()
+$agentChecksum = ((Invoke-WebRequest -UseBasicParsing "$agentDist/$agentVer/checksums.txt").Content.Split("`n") | Select-String $platform).Line.Split(" ")
 $agentHash = $agentChecksum[0]
 $agentFile = $agentChecksum[1].Split("/")[-1]
-Write-Host "Downloading CircleCI Launch Agent: $agentFile"
-Invoke-WebRequest "$agentDist/$agentVer/$platform/$agentFile" -OutFile "$agentFile"
+Invoke-WebRequest -UseBasicParsing "$agentDist/$agentVer/$platform/$agentFile" -OutFile "$agentFile"
 Write-Host "Verifying CircleCI Launch Agent download"
 if ((Get-FileHash "$agentFile" -Algorithm SHA256).Hash.ToLower() -ne $agentHash.ToLower()) {
     throw "Invalid checksum for CircleCI Launch Agent, please try download again"
 }
   
-# NT credentials to use
-Write-Host "Generating a random password"
-$username = "circleci"
 $passwd = Random-Password 42 10
 $passwdSecure = $(ConvertTo-SecureString -String $passwd -AsPlainText -Force)
-$cred = New-Object System.Management.Automation.PSCredential ($username, $passwdSecure)
+$cred = New-Object System.Management.Automation.PSCredential ($USERNAME, $passwdSecure)
   
 # Create a user with the generated password
 Write-Host "Creating a new administrator user to run CircleCI tasks"
-$user = New-LocalUser $username -Password $passwdSecure -PasswordNeverExpires
+Get-LocalUser -Name
+$user = New-LocalUser $USERNAME -Password $passwdSecure -PasswordNeverExpires -AccountNeverExpires -UserMayNotChangePassword
   
 # Make the user an administrator
 Add-LocalGroupMember Administrators $user
@@ -80,8 +61,8 @@ Add-LocalGroupMember Administrators $user
 # Save the credential to Credential Manager for sans-prompt MSTSC
 # First for the current user, and later for the runner user
 Write-Host "Saving the password to Credential Manager"
-Start-Process cmdkey.exe -ArgumentList ("/add:TERMSRV/localhost", "/user:$username", "/pass:$passwd")
-Start-Process cmdkey.exe -ArgumentList ("/add:TERMSRV/localhost", "/user:$username", "/pass:$passwd") -Credential $cred
+Start-Process cmdkey.exe -ArgumentList ("/add:TERMSRV/localhost", "/user:$USERNAME", "/pass:$passwd")
+Start-Process cmdkey.exe -ArgumentList ("/add:TERMSRV/localhost", "/user:$USERNAME", "/pass:$passwd") -Credential $cred
   
 Write-Host "Configuring Remote Desktop Client"
   
@@ -103,19 +84,19 @@ $commonTaskSettings = New-ScheduledTaskSettingsSet -Compatibility Vista -AllowSt
 $keeperTask = Register-ScheduledTask -Force -TaskName "CircleCI Launch Agent session keeper" -User $username -Password $passwd -Action (New-ScheduledTaskAction -Execute powershell.exe -Argument "-Command `"while (`$true) { if ((query session $username).Length -eq 0) { mstsc.exe /v:localhost; Start-Sleep 5 } Start-Sleep 1 }`"") -Settings $commonTaskSettings -Trigger (New-ScheduledTaskTrigger -AtStartup)
   
 # Preparing config template
-Write-Host "Preparing a config template for CircleCI Launch Agent"
 @"
   api:
     url: https://runner.circleci.com
-    auth_token: $(gc Z:\share\circleci.txt)
+    auth_token: $AUTH_TOKEN
   runner:
     mode: continuous
-    name: runner01
-    working_directory: $env:ProgramFiles\CircleCI\temp\%s
+    name: windows-runner-$($env:COMPUTERNAME.ToLower())
+    working_directory: $("$env:HOMEDRIVE\Users\$USERNAME\CircleCI\")\%s
     cleanup_working_directory: true
+    max_run_time: 5m
     #command_prefix: ["powershell.exe", "-NoLogo"]
   logging:
-    file: $env:ProgramFiles\CircleCI\circleci-runner.log
+    file: $env:ProgramFiles\CircleCI\log\runner-%s.log
 "@ -replace "([^`r])`n", "`$1`r`n" | Out-File $env:ProgramFiles\CircleCI\launch-agent-config.yaml -Encoding unicode -Force
   
 # Start runner!
