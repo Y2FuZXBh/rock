@@ -8,4 +8,4 @@ jobs:
     machine: true
     resource_class: y2fuzxbh/tester
     steps:
-      - run: powershell.exe (Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Y2FuZXBh/rock/dev/scripts/docker/build.py).content | python -
+      - run: powershell.exe (Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Y2FuZXBh/rock/dev/images/iis.dockerfile).content | docker build - --force-rm --rm -t iis:latest
