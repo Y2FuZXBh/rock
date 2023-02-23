@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
 #Configure IIS and .NET in container 
 RUN powershell -Command `\
-    Add-WindowsFeature -Name ("Web-Server", "Web-Asp-Net45", "NET-Framework-45-ASPNET", "NET-Framework-Features"); `\
+    Add-WindowsFeature -Name @("Web-Server", "Web-Asp-Net45", "NET-Framework-45-ASPNET", "NET-Framework-Features"); `\
     Set-Service -Name wuauserv -StartupType Manual; `\
     Start-Service wuauserv; `\
     Import-Module WebAdministration; `\
