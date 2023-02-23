@@ -113,6 +113,7 @@ Write-Host "Preparing a config template for CircleCI Launch Agent"
     mode: single-task
     working_directory: $env:ProgramFiles\CircleCI\temp\%s
     cleanup_working_directory: true
+    command_prefix: ["powershell.exe", "-NoLogo"]
   logging:
     file: $env:ProgramFiles\CircleCI\circleci-runner.log
 "@ -replace "([^`r])`n", "`$1`r`n" | Out-File $env:ProgramFiles\CircleCI\launch-agent-config.yaml -Encoding unicode -Force
