@@ -8,4 +8,4 @@ jobs:
     machine: true
     resource_class: y2fuzxbh/tester
     steps:
-      - run: write-host "This was a test."
+      - run: echo "This was a test.."
