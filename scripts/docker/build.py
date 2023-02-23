@@ -12,42 +12,6 @@ user = 'xTestUser'
 now = datetime.datetime.now().strftime(r'%Y.%m%d.%H%M.%S')
 token = secrets.token_urlsafe(96) # 96 might be the max
 
-
-def is_docker_running() -> bool:
-    # note: later add restart service on pause..
-    _exit = 0
-    _os = platform.system().lower()
-    _running = False
-    for p in psutil.process_iter():
-        if p.name() == 'docker.exe':
-            _running = True
-    if not _running:
-        # windows
-        if _os == 'windows':
-            _exit = os.system(
-                r'powershell -c Start-Process $env:ProgramFiles\Docker\Docker\Docker` Desktop.exe')
-        # linux
-        if _os == 'linux':
-            # req: test
-            _exit = os.system(
-                r'systemctl start docker')
-        # mac
-        if _os == 'darwin':
-            # req: test
-            _exit = os.system(
-                r'open -a Docker')
-        # wait
-        if _exit == 0:
-            _wait = None
-            while (not _wait):
-                for p in psutil.process_iter():
-                    if p.name() == 'docker.exe':
-                        _wait = True
-        else:
-            raise 'ERROR: Check If Docker Desktop Is Installed..'
-    return _exit
-
-
 def sql(client, user, now, token):
     # sql - user container
     name = 'sql-'+user
@@ -89,15 +53,15 @@ def iis(client, user, now, token):
     )
 
 
-if is_docker_running():
-    print('user:', user)
-    print('token:', token)
-    print('version:', now)
-    # ref: https://docker-py.readthedocs.io/en/stable/
-    client = docker.from_env()
 
-    # sql
-    #sql(client, user, now, token)
+print('user:', user)
+print('token:', token)
+print('version:', now)
+# ref: https://docker-py.readthedocs.io/en/stable/
+client = docker.from_env()
 
-    # iis
-    #iis(client, user, now, token)
+# sql
+#sql(client, user, now, token)
+
+# iis
+#iis(client, user, now, token)
