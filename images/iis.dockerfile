@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
+LABEL maintainer "testing"
+
 #Configure IIS and .NET in container 
 RUN powershell -Command \
     Add-WindowsFeature Web-Server; \
