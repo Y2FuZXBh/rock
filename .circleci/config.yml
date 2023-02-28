@@ -1,0 +1,11 @@
+version: 2.1
+workflows:
+  testing:
+    jobs:
+      - runner-test
+jobs:
+  runner-test:
+    machine: true
+    resource_class: y2fuzxbh/tester
+    steps:
+      - run: echo "Runner - Test Task Complete"

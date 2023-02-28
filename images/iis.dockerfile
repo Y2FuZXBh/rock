@@ -1,24 +1,40 @@
-FROM mcr.microsoft.com/windows/servercore:ltsc2022
+FROM mcr.microsoft.com/windows/servercore/iis:windowsservercore-ltsc2022
 
-#Configure IIS and .NET in container 
-RUN powershell -Command `
-    #setup features
-    Add-WindowsFeature -Name (Web-Server, Web-Asp-Net45, NET-Framework-45-ASPNET, NET-Framework-Features); `
-    #windows update service
-    Set-Service -Name wuauserv -StartupType Manual; `
-    Start-Service wuauserv; `
-    #iis setup - see hardening\iis.ps1
-    Import-Module WebAdministration; `
-    Set-ItemProperty IIS:\AppPools\DefaultAppPool -name processModel.identityType -value 0; `
-    #test this:
-    Invoke-WebRequest -UseBasicParsing -Uri "https://dotnetbinaries.blob.core.windows.net/servicemonitor/2.0.1.10/ServiceMonitor.exe" -OutFile "C:\ServiceMonitor.exe"
+LABEL maintainer "testing"
+
+# Requirements
+RUN powershell -Command \
+    Add-WindowsFeature Web-Asp-Net45; \
+    Add-WindowsFeature NET-Framework-45-ASPNET; \
+    Add-WindowsFeature NET-Framework-Features; \
+    Set-Service -Name wuauserv -StartupType Manual; \
+    Start-Service wuauserv;
+
+# IIS
+RUN powershell -Command \
+    Import-Module WebAdministration; \
+    Set-ItemProperty IIS:\AppPools\DefaultAppPool -name processModel.identityType -value 0;
+
+# Application
+RUN powershell -Command \
+    # demo files - https://github.com/crdschurch/rock-docker-public
+    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/crdschurch/rock-docker-public/main/Start.aspx" -OutFile "c:\inetpub\wwwroot\Start.aspx"; \
+    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/crdschurch/rock-docker-public/main/web.config" -OutFile "c:\inetpub\wwwroot\web.config"
+
+# Cert
+RUN powershell -Command \
+    Import-Module WebAdministration; \
+    #Create a new localhost cert and save the thumbprint in a hash for future steps
+    $localhostCert = New-SelfSignedCertificate -Subject "localhost" -DnsName "localhost" -CertStoreLocation cert:\LocalMachine\My; \
+    #Assign Web binding to Default Web Site for port 443
+    New-WebBinding -Name "Default Web Site" -IP "*" -Port 443 -Protocol https -SslFlags 1; \
+    #Connect the new cert to the web binding
+    $binding = Get-WebBinding -Name "Default Web Site" -Protocol "https"; \
+    $certificate = Get-Item "Cert:\localmachine\My\$($localhostCert.GetCertHashString())"; \
+    $certificate | New-Item "IIS:\SSLBindings\0.0.0.0!443";
 
 WORKDIR /inetpub/wwwroot
 
 EXPOSE 80
 EXPOSE 443
 
-# Copy Site Files
-#COPY . .
-
-ENTRYPOINT ["C:\\ServiceMonitor.exe", "w3svc"]
