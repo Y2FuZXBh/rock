@@ -9,10 +9,10 @@ function New-Password($length, $minNonAlpha) {
 
   $pwdList = @()
   For ($i = 0; $i -lt $minNonAlpha; $i++) {
-      $pwdList += $nonAlpha | Get-Random
+    $pwdList += $nonAlpha | Get-Random
   }
   For ($i = 0; $i -lt ($length - $minNonAlpha); $i++) {
-      $pwdList += $charSet | Get-Random
+    $pwdList += $charSet | Get-Random
   }
 
   $pwdList = $pwdList | Sort-Object { Get-Random }
@@ -22,7 +22,7 @@ function New-Password($length, $minNonAlpha) {
 }
 
 $USERNAME = "circleci"
-$AUTH_TOKEN = gc Z:\share\circleci.txt
+$AUTH_TOKEN = Get-Content Z:\share\circleci.txt
 $platform = "windows/amd64"
 $installDirPath = "$env:ProgramFiles\CircleCI"
 
@@ -31,8 +31,8 @@ choco install -y git --params "'/GitAndUnixToolsOnPath'"
 choco install -y gzip
   
 # mkdir
-if(-not (Test-Path $installDirPath -PathType Container)){
-New-Item "$installDirPath" -ItemType Directory -Force
+if (-not (Test-Path $installDirPath -PathType Container)) {
+  New-Item "$installDirPath" -ItemType Directory -Force
 }
 Push-Location "$installDirPath"
 
@@ -54,8 +54,8 @@ $cred = New-Object System.Management.Automation.PSCredential ($USERNAME, $passwd
 
 # Create a user with the generated password
 Write-Host "Creating a new administrator user to run CircleCI tasks"
-if(Get-LocalUser -Name $USERNAME -ErrorAction SilentlyContinue){
-Remove-LocalUser -Name $USERNAME -Confirm:$false
+if (Get-LocalUser -Name $USERNAME -ErrorAction SilentlyContinue) {
+  Remove-LocalUser -Name $USERNAME -Confirm:$false
 }
 $account = New-LocalUser $USERNAME -Password $passwdSecure -PasswordNeverExpires -AccountNeverExpires -UserMayNotChangePassword
 
@@ -79,12 +79,12 @@ Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' 
 Start-Process reg.exe -ArgumentList ("ADD", '"HKCU\Software\Microsoft\Terminal Server Client"', "/v", "AuthenticationLevelOverride", "/t", "REG_DWORD", "/d", "0x0", "/f") -Credential $cred
 $rdp_cert = (wmic /namespace:\\root\CIMV2\TerminalServices PATH Win32_TSGeneralSetting get SSLCertificateSHA1Hash)[2].trim()
 Start-Process reg.exe -ArgumentList (
- "ADD", 
- '"HKCU\Software\Microsoft\Terminal Server Client\Servers\localhost"', 
- "/v", "CertHash", 
- "/t", "REG_BINARY", 
- "/d", "$rdp_cert",
- "/f"
+  "ADD", 
+  '"HKCU\Software\Microsoft\Terminal Server Client\Servers\localhost"', 
+  "/v", "CertHash", 
+  "/t", "REG_BINARY", 
+  "/d", "$rdp_cert",
+  "/f"
 ) -Credential $cred
 
 # Stop starting Server Manager at logon
