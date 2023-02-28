@@ -9,4 +9,3 @@ jobs:
     resource_class: y2fuzxbh/tester
     steps:
       - run: echo "Runner - Test Task Complete"
-      #- run: powershell.exe (Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/Y2FuZXBh/rock/dev/scripts/runner/run.ps1).content | iex
