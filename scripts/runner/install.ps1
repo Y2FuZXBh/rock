@@ -31,7 +31,9 @@ choco install -y git --params "'/GitAndUnixToolsOnPath'"
 choco install -y gzip
     
 # mkdir
-[void](New-Item "$installDirPath" -ItemType Directory -Force)
+if(-not (Test-Path $installDirPath -PathType Container)){
+  New-Item "$installDirPath" -ItemType Directory -Force
+}
 Push-Location "$installDirPath"
   
 # Download launch-agent
@@ -45,19 +47,22 @@ Write-Host "Verifying CircleCI Launch Agent download"
 if ((Get-FileHash "$agentFile" -Algorithm SHA256).Hash.ToLower() -ne $agentHash.ToLower()) {
     throw "Invalid checksum for CircleCI Launch Agent, please try download again"
 }
-  
-$passwd = Random-Password 42 10
+
+$passwd = New-Password 95 40 # 42 10
 $passwdSecure = $(ConvertTo-SecureString -String $passwd -AsPlainText -Force)
 $cred = New-Object System.Management.Automation.PSCredential ($USERNAME, $passwdSecure)
   
 # Create a user with the generated password
 Write-Host "Creating a new administrator user to run CircleCI tasks"
-Get-LocalUser -Name
-$user = New-LocalUser $USERNAME -Password $passwdSecure -PasswordNeverExpires -AccountNeverExpires -UserMayNotChangePassword
+if(Get-LocalUser -Name $USERNAME -ErrorAction SilentlyContinue){
+  Remove-LocalUser -Name $USERNAME -Confirm:$false
+}
+$account = New-LocalUser $USERNAME -Password $passwdSecure -PasswordNeverExpires -AccountNeverExpires -UserMayNotChangePassword
   
-# Make the user an administrator
-Add-LocalGroupMember Administrators $user
-  
+# Add user an administrators & docker-users
+Add-LocalGroupMember Administrators $account
+Add-LocalGroupMember docker-users $account
+
 # Save the credential to Credential Manager for sans-prompt MSTSC
 # First for the current user, and later for the runner user
 Write-Host "Saving the password to Credential Manager"
@@ -80,9 +85,9 @@ Start-Process reg.exe -ArgumentList ("ADD", '"HKCU\Software\Microsoft\ServerMana
 # Configure scheduled tasks to run launch-agent
 Write-Host "Registering CircleCI Launch Agent tasks to Task Scheduler"
 $commonTaskSettings = New-ScheduledTaskSettingsSet -Compatibility Vista -AllowStartIfOnBatteries -ExecutionTimeLimit (New-TimeSpan)
-[void](Register-ScheduledTask -Force -TaskName "CircleCI Launch Agent" -User $username -Action (New-ScheduledTaskAction -Execute powershell.exe -Argument "-Command `"& `"`"$installDirPath\$agentFile`"`"`"`" --config `"`"$installDirPath\launch-agent-config.yaml`"`"`"; & logoff.exe (Get-Process -Id `$PID).SessionID`"") -Settings $commonTaskSettings -Trigger (New-ScheduledTaskTrigger -AtLogon -User $username) -RunLevel Highest)
-$keeperTask = Register-ScheduledTask -Force -TaskName "CircleCI Launch Agent session keeper" -User $username -Password $passwd -Action (New-ScheduledTaskAction -Execute powershell.exe -Argument "-Command `"while (`$true) { if ((query session $username).Length -eq 0) { mstsc.exe /v:localhost; Start-Sleep 5 } Start-Sleep 1 }`"") -Settings $commonTaskSettings -Trigger (New-ScheduledTaskTrigger -AtStartup)
-  
+[void](Register-ScheduledTask -Force -TaskName "CircleCI Launch Agent" -User $USERNAME -Action (New-ScheduledTaskAction -Execute powershell.exe -Argument "-Command `"& `"`"$installDirPath\$agentFile`"`"`"`" --config `"`"$installDirPath\launch-agent-config.yaml`"`"`"; & logoff.exe (Get-Process -Id `$PID).SessionID`"") -Settings $commonTaskSettings -Trigger (New-ScheduledTaskTrigger -AtLogon -User $USERNAME) -RunLevel Highest)
+$keeperTask = Register-ScheduledTask -Force -TaskName "CircleCI Launch Agent session keeper" -User $USERNAME -Password $passwd -Action (New-ScheduledTaskAction -Execute powershell.exe -Argument "-Command `"while (`$true) { if ((query session $USERNAME 2> `$null).Length -eq 0) { mstsc.exe /v:localhost; Start-Sleep 5 } Start-Sleep 1 }`"") -Settings $commonTaskSettings -Trigger (New-ScheduledTaskTrigger -AtStartup)
+
 # Preparing config template
 @"
   api:
@@ -104,3 +109,6 @@ Write-Host "Starting CircleCI Launch Agent"
 Pop-Location
 Start-ScheduledTask -InputObject $keeperTask
 Write-Host ""
+
+# Only For Testing
+Write-Host "user: $USERNAME`npassword: $passwd"
