@@ -19,22 +19,22 @@ RUN powershell -Command \
 RUN powershell -Command \
     # demo files - https://github.com/crdschurch/rock-docker-public
     Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/crdschurch/rock-docker-public/main/Start.aspx" -OutFile "c:\inetpub\wwwroot\Start.aspx"; \
-    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/crdschurch/rock-docker-public/main/web.config" -OutFile "c:\inetpub\wwwroot\web.config"
+    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/crdschurch/rock-docker-public/main/web.config" -OutFile "c:\inetpub\wwwroot\web.config";
 
 # Cert
 RUN powershell -Command \
-    Import-Module WebAdministration; \
     #Create a new localhost cert and save the thumbprint in a hash for future steps
-    $localhostCert = New-SelfSignedCertificate -Subject "localhost" -DnsName "localhost" -CertStoreLocation cert:\LocalMachine\My; \
+    $localhostCert = New-SelfSignedCertificate -Subject 'localhost' -DnsName "localhost" -CertStoreLocation "cert:\LocalMachine\My"; \
     #Assign Web binding to Default Web Site for port 443
-    New-WebBinding -Name "Default Web Site" -IP "*" -Port 443 -Protocol https -SslFlags 1; \
+    New-WebBinding -Name 'Default Web Site' -HostHeader "Rock" -IP "*" -Port "443" -Protocol "https" -SslFlags "1"; \
     #Connect the new cert to the web binding
-    $binding = Get-WebBinding -Name "Default Web Site" -Protocol "https"; \
-    $certificate = Get-Item "Cert:\localmachine\My\$($localhostCert.GetCertHashString())"; \
-    $certificate | New-Item "IIS:\SSLBindings\0.0.0.0!443";
+    $bind = Get-WebBinding -Name 'Default Web Site' -Protocol "https"; \
+    $bind.AddSslCertificate($localhostCert.GetCertHashString(), 'my')
+
 
 WORKDIR /inetpub/wwwroot
 
 EXPOSE 80
 EXPOSE 443
 
+ENTRYPOINT [powershell.exe]
