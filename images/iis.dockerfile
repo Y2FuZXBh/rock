@@ -34,7 +34,7 @@ RUN powershell -Command \
 
 WORKDIR /inetpub/wwwroot
 
+COPY ./RockWeb /inetpub/wwwroot
+
 EXPOSE 80
 EXPOSE 443
-
-ENTRYPOINT [powershell.exe]
