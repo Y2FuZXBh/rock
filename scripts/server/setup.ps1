@@ -21,4 +21,8 @@ Enable-WindowsOptionalFeature -Online -FeatureName Containers -NoRestart
 # circleci
 choco install circleci-cli -y
 
-# add windows reboot check here
+Enable-WindowsOptionalFeature -Online -FeatureName HypervisorPlatform -NoRestart
+Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart
+wsl.exe --install
+Restart-Computer -Force
