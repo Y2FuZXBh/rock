@@ -14,4 +14,4 @@ jobs:
           name: tester
           command: powershell.exe -c >
             Write-Output 'USER - `$env:username';
-            . '$env:SystemDrive\test.ps1
+            . `$env:SystemDrive\test.ps1
