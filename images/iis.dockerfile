@@ -2,6 +2,9 @@ FROM mcr.microsoft.com/windows/servercore/iis:windowsservercore-ltsc2022
 
 LABEL maintainer "Y2FuZXBh"
 
+EXPOSE 80
+EXPOSE 443
+
 # Requirements
 RUN powershell -Command \
     Add-WindowsFeature Web-Asp-Net45; \
@@ -33,8 +36,3 @@ RUN powershell -Command \
 
 
 WORKDIR /inetpub/wwwroot
-
-COPY ./RockWeb /inetpub/wwwroot
-
-EXPOSE 80
-EXPOSE 443

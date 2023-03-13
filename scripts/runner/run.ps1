@@ -32,4 +32,3 @@ docker build ./sql --force-rm --pull --compress --tag sql:latest
 Remove-Images
 Remove-Container -Name "sql-$USERNAME"
 docker run --detach --name "sql-$USERNAME" -p 1433:1433 sql:latest
-
