@@ -41,14 +41,14 @@ if ($env:CIRCLE_BRANCH -ne $MASTER) {
     $PORTS = Get-OpenPort
 
     ## IIS ##
-    Get-Content ".\images\iis.dockerfile" | docker build - --force-rm --pull --compress --tag rock:latest
+    Get-Content docker/iis.dockerfile | docker build - --force-rm --pull --compress --tag rock:latest
     Remove-Images
     Remove-Container -Name "rock-$USERNAME"
     docker run --detach --name "rock-$USERNAME" -p "80:$($PORTS[0])" rock:latest
     Write-Output "Container Created: rock-$USERNAME"
 
     ## SQL ##
-    Get-Content ".\images\sql.dockerfile" | docker build - --force-rm --pull --compress --tag sql:latest
+    Get-Content docker/sql.dockerfile | docker build - --force-rm --pull --compress --tag sql:latest
     Remove-Images
     Remove-Container -Name "sql-$USERNAME"
     docker run --detach --name "sql-$USERNAME" -p "1433:$($PORTS[0])" sql:latest

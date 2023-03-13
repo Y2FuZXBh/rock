@@ -9,8 +9,8 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 
 WORKDIR /
 
-COPY ./scripts/docker/sql-express.ps1 .
-COPY ./scripts/docker/start.ps1 .
+COPY ./sql-express.ps1 .
+COPY ./sql-start.ps1 .
 
 RUN & .\sql-express.ps1 -Wait ; \
         Remove-Item sql-express.ps1 ; \
@@ -18,4 +18,4 @@ RUN & .\sql-express.ps1 -Wait ; \
 
 USER sqlexpress
 
-CMD .\start.ps1 -attach_dbs \"$env:attach_dbs\" -Verbose
+CMD .\sql-start.ps1 -attach_dbs \"$env:attach_dbs\" -Verbose
