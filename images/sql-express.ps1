@@ -37,16 +37,16 @@ $passwd = New-Password 127 57 # 45% int & special
 $passwdSecure = ConvertTo-SecureString -String $passwd -AsPlainText -Force
 New-LocalUser $USERNAME -Password $passwdSecure -PasswordNeverExpires -AccountNeverExpires -UserMayNotChangePassword
 
-Start-Process ./sqlexpress/setup.exe "/IACCEPTSQLSERVERLICENSETERMS /Q /USESQLRECOMMENDEDMEMORYLIMITS /ACTION=install /TCPENABLED=1 /SECURITYMODE=SQL /FEATURES=SQL /INSTANCEID=SQLEXPRESS /INSTANCENAME=SQLEXPRESS /UPDATEENABLED=FALSE /SQLSYSADMINACCOUNTS=`"$env:COMPUTERNAME\$USERNAME`" /SAPWD=`"$passwdSecure`"" -Wait
+Start-Process ./sqlexpress/setup.exe "/IACCEPTSQLSERVERLICENSETERMS /Q /USESQLRECOMMENDEDMEMORYLIMITS /ACTION=install /TCPENABLED=1 /SECURITYMODE=SQL /FEATURES=SQL /INSTANCEID=SQLEXPRESS /INSTANCENAME=SQLEXPRESS /UPDATEENABLED=FALSE /SQLSYSADMINACCOUNTS=`"$env:COMPUTERNAME\$USERNAME`" /SAPWD='$passwdSecure'" -Wait
 
 Remove-Item ("./sqlexpress", "./sqlexpress.exe") -Recurse -Force
 
-Start-Service "MSSQL`$SQLEXPRESS"
-Set-ItemProperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql16.SQLEXPRESS\mssqlserver\supersocketnetlib\tcp\ipall' -name tcpdynamicports -value '' 
-Set-ItemProperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql16.SQLEXPRESS\mssqlserver\supersocketnetlib\tcp\ipall' -name tcpport -value 1433
-Set-ItemProperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql16.SQLEXPRESS\mssqlserver\' -name LoginMode -value 2
-Start-Service "MSSQL`$SQLEXPRESS"
-
 # Save As SYSTEM /f Ref
 [Environment]::SetEnvironmentVariable('PASSWD', $passwd, [System.EnvironmentVariableTarget]::User)
+
+Stop-Service "MSSQL`$SQLEXPRESS"
+Set-ItemProperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql16.SQLEXPRESS\mssqlserver\supersocketnetlib\tcp\ipall' -name tcpdynamicports -value ''
+Set-ItemProperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql16.SQLEXPRESS\mssqlserver\supersocketnetlib\tcp\ipall' -name tcpport -value 1433
+Set-ItemProperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql16.SQLEXPRESS\mssqlserver\' -name LoginMode -value 2
+
 Remove-Item (Get-PSReadlineOption).HistorySavePath
