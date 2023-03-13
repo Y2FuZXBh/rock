@@ -13,7 +13,7 @@ COPY sql-express.ps1 .
 COPY start.ps1 .
 
 RUN & .\sql-express.ps1 -Wait ; \
-	Remove-Item sql-express.ps1 -Force
+        Remove-Item ("sql-express.ps1", "$((Get-PSReadlineOption).HistorySavePath)") -Force
 
 USER sqlexpress
 

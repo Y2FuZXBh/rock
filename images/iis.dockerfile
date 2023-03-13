@@ -8,18 +8,18 @@ RUN powershell -Command \
     Add-WindowsFeature NET-Framework-45-ASPNET; \
     Add-WindowsFeature NET-Framework-Features; \
     Set-Service -Name wuauserv -StartupType Manual; \
-    Start-Service wuauserv;
+    Start-Service wuauserv
 
 # IIS
 RUN powershell -Command \
     Import-Module WebAdministration; \
-    Set-ItemProperty IIS:\AppPools\DefaultAppPool -name processModel.identityType -value 0;
+    Set-ItemProperty IIS:\AppPools\DefaultAppPool -name processModel.identityType -value 0
 
 # Application
 RUN powershell -Command \
     # demo files - https://github.com/crdschurch/rock-docker-public
     Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/crdschurch/rock-docker-public/main/Start.aspx" -OutFile "c:\inetpub\wwwroot\Start.aspx"; \
-    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/crdschurch/rock-docker-public/main/web.config" -OutFile "c:\inetpub\wwwroot\web.config";
+    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/crdschurch/rock-docker-public/main/web.config" -OutFile "c:\inetpub\wwwroot\web.config"
 
 # Cert
 RUN powershell -Command \

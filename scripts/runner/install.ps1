@@ -30,7 +30,8 @@ $runnerStartPath = "$env:HOMEDRIVE\Users\$USERNAME\runner"
 # Install Git
 choco install -y git --params "'/GitAndUnixToolsOnPath'"
 choco install -y gzip
-  
+choco install -y nssm
+
 # mkdir
 if (-not (Test-Path $installDirPath -PathType "Container")) {
   New-Item "$installDirPath" -ItemType "Directory" -Force
