@@ -39,7 +39,8 @@ $USERNAME = ($env:CIRCLE_USERNAME).ToLower()
 if ($env:CIRCLE_BRANCH -ne $MASTER) {
 
     $PORTS = Get-OpenPort
-    Set-Location docker/
+    Set-Location docker
+    ls
 
     ## IIS ##
     Get-Content iis.dockerfile | docker build - --force-rm --pull --compress --tag rock:latest
