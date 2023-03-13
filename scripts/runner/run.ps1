@@ -18,17 +18,31 @@ function Remove-Images {
     }
 }
 
+# SET THIS or ADD API Call to Project
+$MASTER = "main"
+
+# Git User: $env:CIRCLE_USERNAME
 $USERNAME = ($env:username).ToLower()
-Set-Location ~/Desktop
+# Git Branch: $env:CIRCLE_BRANCH
+$BRANCH = "dev"
 
-## IIS ##
-docker build ./iis --force-rm --pull --compress --tag rock:latest
-Remove-Images
-Remove-Container -Name "rock-$USERNAME"
-docker run --detach --name "rock-$USERNAME" -p 80:80 -p 443:443 rock:latest
+## MAIN ##
+if($BRANCH -ne $MASTER){
 
-## SQL ##
-docker build ./sql --force-rm --pull --compress --tag sql:latest
-Remove-Images
-Remove-Container -Name "sql-$USERNAME"
-docker run --detach --name "sql-$USERNAME" -p 1433:1433 sql:latest
+    # Change This If Needed:
+    $IIS_DOCKERFILE = "https://raw.githubusercontent.com/Y2FuZXBh/rock/dev/images/iis.dockerfile"
+    $SQL_DOCKERFILE = "https://raw.githubusercontent.com/Y2FuZXBh/rock/dev/images/sql.dockerfile"
+
+    ## IIS ##
+    (Invoke-WebRequest -UseBasicParsing $IIS_DOCKERFILE).content | docker build - --force-rm --pull --compress --tag rock:latest
+    Remove-Images
+    Remove-Container -Name "rock-$USERNAME"
+    docker run --detach --name "rock-$USERNAME" -p 80:80 -p 443:443 rock:latest
+
+    ## SQL ##
+    (Invoke-WebRequest -UseBasicParsing $SQL_DOCKERFILE).content | docker build - --force-rm --pull --compress --tag sql:latest
+    Remove-Images
+    Remove-Container -Name "sql-$USERNAME"
+    docker run --detach --name "sql-$USERNAME" -p 1433:1433 sql:latest
+
+}
