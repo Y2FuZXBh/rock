@@ -9,8 +9,8 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 
 WORKDIR /
 
-COPY docker/sql-express.ps1 .
-COPY docker/sql-start.ps1 .
+COPY sql-express.ps1 .
+COPY sql-start.ps1 .
 
 RUN & .\sql-express.ps1 -Wait ; \
         Remove-Item sql-express.ps1 ; \
