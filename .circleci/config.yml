@@ -15,3 +15,4 @@ jobs:
           command: >
             powershell.exe \\\test.ps1;
             powershell.exe -c "ls";
+            powershell.exe \\\scripts\\\runner\\\run.ps1;
