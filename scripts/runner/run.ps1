@@ -53,7 +53,7 @@ if ($env:CIRCLE_BRANCH -ne $MASTER) {
     docker build --force-rm --pull --compress --tag sql:latest .\sql.dockerfile
     Remove-Images
     Remove-Container -Name "sql-$USERNAME"
-    docker run --detach --name "sql-$USERNAME" -p "1433:$($PORTS[0])" sql:latest
+    docker run --detach --name "sql-$USERNAME" -p "1433:$($PORTS[1])" sql:latest
     Write-Output "Container Created: sql-$USERNAME"
 
     ## URL ##
