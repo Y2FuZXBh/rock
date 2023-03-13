@@ -1,5 +1,5 @@
 function Remove-Container ([String]$Name) {
-    $container = docker container ls -a --format '{{json .}}' | ConvertFrom-Json | where { $_.Names -eq $Name }
+    $container = docker container ls -a --format '{{json .}}' | ConvertFrom-Json | Where-Object { $_.Names -eq $Name }
     if ($container) {
         if ($container.State -ne 'exited') {
             docker container stop $container.ID
@@ -18,6 +18,19 @@ function Remove-Images {
     }
 }
 
+function Get-ContainerIP ([string]$Name) {
+    return (docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $Name)
+}
+
+function Get-ContainerPorts ([string]$Name) {
+    return (docker container port $Name).foreach({$_.split('/')[0]})
+}
+function Get-OpenPort {
+    $allowed = 8500..9000
+    $active = (docker container ls --format "{{.Names}}|{{.Ports}}" -a).split('>|/').where({if($_ -match "^\d+$"){$_}})
+    return (Compare-Object -ReferenceObject $allowed -DifferenceObject $active).where({$_.SideIndicator -eq '<='}).InputObject[0,1]
+}
+
 # SET THIS or ADD API Call to Project
 $MASTER = "main"
 $USERNAME = ($env:CIRCLE_USERNAME).ToLower()
@@ -29,16 +42,25 @@ if($env:CIRCLE_BRANCH -ne $MASTER){
     $IIS_DOCKERFILE = "https://raw.githubusercontent.com/Y2FuZXBh/rock/dev/images/iis.dockerfile"
     $SQL_DOCKERFILE = "https://raw.githubusercontent.com/Y2FuZXBh/rock/dev/images/sql.dockerfile"
 
+    $PORTS = Get-OpenPort
+
     ## IIS ##
     (Invoke-WebRequest -UseBasicParsing $IIS_DOCKERFILE).content | docker build - --force-rm --pull --compress --tag rock:latest
     Remove-Images
     Remove-Container -Name "rock-$USERNAME"
-    docker run --detach --name "rock-$USERNAME" -p 80:80 -p 443:443 rock:latest
+    docker run --detach --name "rock-$USERNAME" -p 80:$PORTS[0] rock:latest
+    Write-Output "Container Created: rock-$USERNAME"
 
     ## SQL ##
     (Invoke-WebRequest -UseBasicParsing $SQL_DOCKERFILE).content | docker build - --force-rm --pull --compress --tag sql:latest
     Remove-Images
     Remove-Container -Name "sql-$USERNAME"
-    docker run --detach --name "sql-$USERNAME" -p 1433:1433 sql:latest
+    docker run --detach --name "sql-$USERNAME" -p 1433:$PORTS[1] sql:latest
+    Write-Output "Container Created: sql-$USERNAME"
 
+    ## URL ##
+    foreach($_ in Get-ContainerPorts -Name "rock-$USERNAME"){
+        $ip = Get-ContainerIP -Name "rock-$USERNAME"
+        Write-Output "http://${ip}:$_/Start.aspx"
+    }
 }
