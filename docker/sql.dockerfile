@@ -12,8 +12,8 @@ WORKDIR /
 COPY scripts/express.ps1 .
 COPY scripts/sql.ps1 .
 
-RUN & .\sql.ps1 ; \
-        Remove-Item sql.ps1 ; \
+RUN & .\express.ps1 ; \
+        Remove-Item express.ps1 ; \
         gc (Get-PSReadlineOption).HistorySavePath
 
 USER sqlexpress
