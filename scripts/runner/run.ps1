@@ -40,7 +40,6 @@ if ($env:CIRCLE_BRANCH -ne $MASTER) {
 
     $PORTS = Get-OpenPort
     Set-Location docker
-    ls
 
     ## IIS ##
     Get-Content iis.dockerfile | docker build - --force-rm --pull --compress --tag rock:latest

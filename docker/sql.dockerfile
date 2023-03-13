@@ -9,13 +9,13 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 
 WORKDIR /
 
-COPY scripts/sql/express.ps1 .
-COPY scripts/sql/start.ps1 .
+COPY express.ps1 .
+COPY sql.ps1 .
 
-RUN & .\express.ps1 -Wait ; \
-        Remove-Item express.ps1 ; \
+RUN & .\sql.ps1 -Wait ; \
+        Remove-Item sql.ps1 ; \
         gc (Get-PSReadlineOption).HistorySavePath
 
 USER sqlexpress
 
-CMD .\start.ps1 -attach_dbs \"$env:attach_dbs\" -Verbose
+CMD .\sql.ps1 -attach_dbs \"$env:attach_dbs\" -Verbose
