@@ -48,14 +48,14 @@ if ($env:CIRCLE_BRANCH -ne $MASTER) {
     (Invoke-WebRequest -UseBasicParsing $IIS_DOCKERFILE).content | docker build - --force-rm --pull --compress --tag rock:latest
     Remove-Images
     Remove-Container -Name "rock-$USERNAME"
-    docker run --detach --name "rock-$USERNAME" -p 80:$PORTS[0] rock:latest
+    docker run --detach --name "rock-$USERNAME" -p "80:$($PORTS[0])" rock:latest
     Write-Output "Container Created: rock-$USERNAME"
 
     ## SQL ##
     (Invoke-WebRequest -UseBasicParsing $SQL_DOCKERFILE).content | docker build - --force-rm --pull --compress --tag sql:latest
     Remove-Images
     Remove-Container -Name "sql-$USERNAME"
-    docker run --detach --name "sql-$USERNAME" -p 1433:$PORTS[1] sql:latest
+    docker run --detach --name "sql-$USERNAME" -p "1433:$($PORTS[0])" sql:latest
     Write-Output "Container Created: sql-$USERNAME"
 
     ## URL ##
