@@ -12,4 +12,7 @@ jobs:
       - checkout
       - run:
           name: tester
-          command: powershell.exe /test.ps1
+          command: powershell.exe -c >
+            Write-Output "USER# $env:username"
+            Set-Location /
+            .\test.ps1
