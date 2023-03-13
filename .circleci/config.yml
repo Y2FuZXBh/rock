@@ -6,12 +6,12 @@ workflows:
 jobs:
   runner-test:
     machine: true
-    parallelism: 5
+    #parallelism: 5
     resource_class: y2fuzxbh/tester
     steps:
       - run:
           name: tester
-          command: powershell.exe -c \
+          command: powershell.exe -c
             write-output "USER = test"
             write-output "BRANCH = test";
 # - checkout
