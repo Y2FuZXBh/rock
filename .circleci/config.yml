@@ -12,4 +12,4 @@ jobs:
       - checkout
       - run:
           name: tester
-          command: powershell.exe "ls `$env:CIRCLE_WORKING_DIRECTORY"
+          command: powershell.exe /test.ps1
