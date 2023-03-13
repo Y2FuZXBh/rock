@@ -11,6 +11,6 @@ jobs:
       - checkout
       - run:
           name: tester
-          command: powershell.exe -c
-            - write-output "USER = test"
+          command: powershell.exe
+            - write-output "USER = test" 
             - write-output "BRANCH = test"
