@@ -9,8 +9,7 @@ jobs:
     #parallelism: 5
     resource_class: y2fuzxbh/tester
     steps:
-      - checkout
+      #- checkout
       - run:
           name: tester
-          command: powershell.exe "ls `$CIRCLE_WORKING_DIRECTORY"
-# - checkout
+          command: powershell.exe "ls `$env:CIRCLE_WORKING_DIRECTORY"
