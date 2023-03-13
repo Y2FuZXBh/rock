@@ -13,6 +13,5 @@ jobs:
       - run:
           name: tester
           command: powershell.exe -c >
-            Write-Output "USER# $env:username"
-            Set-Location /
-            .\test.ps1
+            Write-Output 'USER - `$env:username';
+            . '$env:SystemDrive\test.ps1
