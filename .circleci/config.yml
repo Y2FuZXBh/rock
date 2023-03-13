@@ -8,5 +8,9 @@ jobs:
     machine: true
     resource_class: y2fuzxbh/tester
     steps:
-      - run: powershell.exe -c "write-output 'USER = test'"
-      - run: powershell.exe -c "write-output 'BRANCH = test'"
+      - checkout
+      - run:
+          name: tester
+          command: powershell.exe -c
+            - write-output "USER = test"
+            - write-output "BRANCH = test"
