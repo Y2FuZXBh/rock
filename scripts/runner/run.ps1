@@ -20,14 +20,10 @@ function Remove-Images {
 
 # SET THIS or ADD API Call to Project
 $MASTER = "main"
-
-# Git User: $env:CIRCLE_USERNAME
-$USERNAME = ($env:username).ToLower()
-# Git Branch: $env:CIRCLE_BRANCH
-$BRANCH = "dev"
+$USERNAME = ($env:CIRCLE_USERNAME).ToLower()
 
 ## MAIN ##
-if($BRANCH -ne $MASTER){
+if($env:CIRCLE_BRANCH -ne $MASTER){
 
     # Change This If Needed:
     $IIS_DOCKERFILE = "https://raw.githubusercontent.com/Y2FuZXBh/rock/dev/images/iis.dockerfile"
