@@ -6,6 +6,7 @@ workflows:
 jobs:
   runner-test:
     machine: true
+    parallelism: 5
     resource_class: y2fuzxbh/tester
     steps:
       - run:
