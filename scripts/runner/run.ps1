@@ -28,7 +28,7 @@ function Get-ContainerPorts ([string]$Name) {
 function Get-OpenPort {
     $allowed = 8500..9000
     $active = (docker container ls --format "{{.Names}}|{{.Ports}}" -a).split('>|/').where({ if ($_ -match "^\d+$") { $_ } })
-    return (Compare-Object -ReferenceObject $allowed -DifferenceObject $active).where({ $_.SideIndicator -eq '<=' }).InputObject[0, 1]
+    return ((Compare-Object -ReferenceObject $allowed -DifferenceObject $active).where({ $_.SideIndicator -eq '<=' }).InputObject[0, 1])
 }
 
 # SET THIS or ADD API Call to Project
