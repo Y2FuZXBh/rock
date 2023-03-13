@@ -9,13 +9,12 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 
 WORKDIR /
 
-COPY .\\docker\\sql-express.ps1 .
-COPY .\\docker\\sql-start.ps1 .
+COPY scripts/ .
 
-RUN & .\sql-express.ps1 -Wait ; \
-        Remove-Item sql-express.ps1 ; \
+RUN & .\express.ps1 -Wait ; \
+        Remove-Item express.ps1 ; \
         gc (Get-PSReadlineOption).HistorySavePath
 
 USER sqlexpress
 
-CMD .\sql-start.ps1 -attach_dbs \"$env:attach_dbs\" -Verbose
+CMD .\start.ps1 -attach_dbs \"$env:attach_dbs\" -Verbose
