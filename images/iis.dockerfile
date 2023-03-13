@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/windows/servercore/iis:windowsservercore-ltsc2022
 
-LABEL maintainer "testing"
+LABEL maintainer "Y2FuZXBh"
 
 # Requirements
 RUN powershell -Command \

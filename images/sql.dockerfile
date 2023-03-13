@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
-LABEL maintainer "testing"
+LABEL maintainer "Y2FuZXBh"
 
 ENV attach_dbs="[]"
 EXPOSE 1433
