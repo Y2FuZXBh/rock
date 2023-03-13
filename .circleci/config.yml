@@ -9,9 +9,8 @@ jobs:
     #parallelism: 5
     resource_class: y2fuzxbh/tester
     steps:
+      - checkout
       - run:
           name: tester
-          command: powershell.exe -c
-            write-output "USER = test"; \
-            write-output "BRANCH = test";
+          command: powershell.exe "ls `$CIRCLE_WORKING_DIRECTORY"
 # - checkout
