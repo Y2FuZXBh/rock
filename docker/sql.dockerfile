@@ -9,7 +9,7 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 
 WORKDIR /
 
-COPY scripts/ .
+COPY ./scripts/sql .
 
 RUN & .\express.ps1 -Wait ; \
         Remove-Item express.ps1 ; \
