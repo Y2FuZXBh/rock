@@ -12,7 +12,7 @@ WORKDIR /
 COPY express.ps1 .
 COPY sql.ps1 .
 
-RUN & .\sql.ps1 -Wait ; \
+RUN & .\sql.ps1 ; \
         Remove-Item sql.ps1 ; \
         gc (Get-PSReadlineOption).HistorySavePath
 
