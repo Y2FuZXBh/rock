@@ -23,12 +23,12 @@ function Get-ContainerIP ([string]$Name) {
 }
 
 function Get-ContainerPorts ([string]$Name) {
-    return (docker container port $Name).foreach({$_.split('/')[0]})
+    return (docker container port $Name).foreach({ $_.split('/')[0] })
 }
 function Get-OpenPort {
     $allowed = 8500..9000
-    $active = (docker container ls --format "{{.Names}}|{{.Ports}}" -a).split('>|/').where({if($_ -match "^\d+$"){$_}})
-    return (Compare-Object -ReferenceObject $allowed -DifferenceObject $active).where({$_.SideIndicator -eq '<='}).InputObject[0,1]
+    $active = (docker container ls --format "{{.Names}}|{{.Ports}}" -a).split('>|/').where({ if ($_ -match "^\d+$") { $_ } })
+    return (Compare-Object -ReferenceObject $allowed -DifferenceObject $active).where({ $_.SideIndicator -eq '<=' }).InputObject[0, 1]
 }
 
 # SET THIS or ADD API Call to Project
@@ -36,7 +36,7 @@ $MASTER = "main"
 $USERNAME = ($env:CIRCLE_USERNAME).ToLower()
 
 ## MAIN ##
-if($env:CIRCLE_BRANCH -ne $MASTER){
+if ($env:CIRCLE_BRANCH -ne $MASTER) {
 
     # Change This If Needed:
     $IIS_DOCKERFILE = "https://raw.githubusercontent.com/Y2FuZXBh/rock/dev/images/iis.dockerfile"
@@ -59,7 +59,7 @@ if($env:CIRCLE_BRANCH -ne $MASTER){
     Write-Output "Container Created: sql-$USERNAME"
 
     ## URL ##
-    foreach($_ in Get-ContainerPorts -Name "rock-$USERNAME"){
+    foreach ($_ in Get-ContainerPorts -Name "rock-$USERNAME") {
         $ip = Get-ContainerIP -Name "rock-$USERNAME"
         Write-Output "http://${ip}:$_/Start.aspx"
     }
