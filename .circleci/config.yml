@@ -8,5 +8,5 @@ jobs:
     machine: true
     resource_class: y2fuzxbh/tester
     steps:
-      - run: powershell.exe -c "write-output 'USER = `$env:CIRCLE_USERNAME'"
-      - run: powershell.exe -c "write-output 'BRANCH = `$env:CIRCLE_BRANCH'"
+      - run: powershell.exe -c "write-output 'USER = test'"
+      - run: powershell.exe -c "write-output 'BRANCH = test'"
