@@ -13,5 +13,5 @@ jobs:
       - run:
           name: tester
           command: >
-            powershell.exe \\\test.ps1
-            powershell.exe -c "ls $env:CIRCLE_WORKING_DIRECTORY"
+            powershell.exe \\\test.ps1;
+            powershell.exe -c "ls $env:CIRCLE_WORKING_DIRECTORY";
