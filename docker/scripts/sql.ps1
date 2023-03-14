@@ -9,7 +9,7 @@ param(
 
 # start the service
 Write-Verbose "Starting SQL Server"
-start-service "MSSQL`$SQLEXPRESS"
+Start-Service "MSSQL`$SQLEXPRESS"
 
 <#
 if($sa_password -ne "_")

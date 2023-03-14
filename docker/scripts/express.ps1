@@ -24,8 +24,6 @@ function New-Password($length, $minNonAlpha) {
   ([char[]] $pwdList) -join ""
 }
 
-Set-Location /
-
 Invoke-WebRequest -UseBasicParsing 'https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SQLEXPR_x64_ENU.exe' -OutFile sqlexpress.exe
 
 Start-Process ./sqlexpress.exe "/Q /x:/sqlexpress" -Wait
