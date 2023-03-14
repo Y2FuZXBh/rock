@@ -62,7 +62,7 @@ $USERNAME = ($env:CIRCLE_USERNAME).ToLower()
 if ($env:CIRCLE_BRANCH -ne $MASTER) {
 
     $PORTS = Get-OpenPort
-    $PASSWD = New-Password
+    $PASSWD = New-Password 127 57 # 45% int & special
     #Set-Location docker
 
     ## BUILD ##

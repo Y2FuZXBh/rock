@@ -7,29 +7,6 @@ param(
 $ProgressPreference = 'SilentlyContinue'
 $USERNAME = "sqlexpress"
 
-function New-Password($length, $minNonAlpha) {
-  $alpha = [char]65..[char]90 + [char]97..[char]122
-  $numeric = [char]48..[char]57
-  # :;<=>?@!#$%&()*+,-./[\]^_`
-  $symbols = [char]58..[char]64 + @([char]33) + [char]35..[char]38 + [char]40..[char]47 + [char]91..[char]96
-
-  $nonAlpha = $numeric + $symbols
-  $charSet = $alpha + $nonAlpha
-
-  $pwdList = @()
-  For ($i = 0; $i -lt $minNonAlpha; $i++) {
-    $pwdList += $nonAlpha | Get-Random
-  }
-  For ($i = 0; $i -lt ($length - $minNonAlpha); $i++) {
-    $pwdList += $charSet | Get-Random
-  }
-
-  $pwdList = $pwdList | Sort-Object { Get-Random }
-
-  # a bug on Server 2016 joins as stringified integers unles we cast to [char[]]
-  ([char[]] $pwdList) -join ""
-}
-
 Invoke-WebRequest -UseBasicParsing 'https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SQLEXPR_x64_ENU.exe' -OutFile sqlexpress.exe
 
 Start-Process ./sqlexpress.exe "/Q /x:/sqlexpress" -Wait
