@@ -25,7 +25,7 @@ Import-Module WebAdministration
         MultipleActiveResultSets=true"
 	    providerName="System.Data.SqlClient"/>
 </connectionStrings>
-"@ | Out-File c:\inetpub\wwwroot\web.ConnectionStrings.config
+"@ | Out-File c:\inetpub\wwwroot\web.ConnectionStrings.config -Force
 
 # IIS Config
 Set-ItemProperty IIS:\AppPools\DefaultAppPool -name processModel.identityType -value 0
