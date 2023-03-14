@@ -23,6 +23,6 @@ COPY docker/scripts/iis.ps1 .
 COPY app/RockWeb /inetpub/wwwroot
 
 # Setup
-RUN & .\iis.ps1 -SQL_IP "$SQL_IP" -SQL_Port "$SQL_Port" -SQL_PASSWD "$SQL_PASSWORD"
+RUN & .\iis.ps1
 
 WORKDIR /inetpub/wwwroot

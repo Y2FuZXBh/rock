@@ -1,9 +1,3 @@
-param(
-    [Parameter(Mandatory = $false)]
-    [AllowEmptyString()]
-    [string]$SQL_PASSWD
-)
-
 $ProgressPreference = 'SilentlyContinue'
 $USERNAME = "sqlexpress"
 
@@ -15,7 +9,7 @@ if (Get-LocalUser -Name $USERNAME -ErrorAction SilentlyContinue) {
   Remove-LocalUser -Name $USERNAME -Confirm:$false
 }
 
-$passwdSecure = ConvertTo-SecureString -String $SQL_PASSWD -AsPlainText -Force
+$passwdSecure = ConvertTo-SecureString -String $env:SQL_PASSWORD -AsPlainText -Force
 New-LocalUser $USERNAME -Password $passwdSecure -PasswordNeverExpires -AccountNeverExpires -UserMayNotChangePassword
 
 Start-Process ./sqlexpress/setup.exe "/IACCEPTSQLSERVERLICENSETERMS /Q /USESQLRECOMMENDEDMEMORYLIMITS /ACTION=install /TCPENABLED=1 /SECURITYMODE=SQL /FEATURES=SQL /INSTANCEID=SQLEXPRESS /INSTANCENAME=SQLEXPRESS /UPDATEENABLED=FALSE /SQLSYSADMINACCOUNTS=`"$env:COMPUTERNAME\$USERNAME`" /SAPWD='$passwdSecure'" -Wait

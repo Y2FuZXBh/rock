@@ -1,15 +1,3 @@
-param(
-  [Parameter(Mandatory = $false)]
-  [AllowEmptyString()]
-  [string]$SQL_IP,
-  [Parameter(Mandatory = $false)]
-  [AllowEmptyString()]
-  [string]$SQL_Port,
-  [Parameter(Mandatory = $false)]
-  [AllowEmptyString()]
-  [string]$SQL_PASSWD
-)
-
 Import-Module WebAdministration
 
 # ConnectionStrings
@@ -19,11 +7,11 @@ Import-Module WebAdministration
 	<add
 	  name="RockContext"
 	  connectionString="
-	    Data Source=$SQL_IP\$SQL_Port;
+	    Data Source=$env:SQL_IP\$env:SQL_Port;
         Initial Catalog=bccrock;
         Network Library=DBMSSOCN;
         User Id=sqlexpress;
-        password=$SQL_PASSWD;
+        password=$env:SQL_PASSWORD;
         Trusted_Connection=True;
         MultipleActiveResultSets=true"
 	    providerName="System.Data.SqlClient"/>
