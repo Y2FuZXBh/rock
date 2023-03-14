@@ -19,10 +19,7 @@ RUN powershell -Command \
     Set-ItemProperty IIS:\AppPools\DefaultAppPool -name processModel.identityType -value 0
 
 # Application
-RUN powershell -Command \
-    # demo files - https://github.com/crdschurch/rock-docker-public
-    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/crdschurch/rock-docker-public/main/Start.aspx" -OutFile "c:\inetpub\wwwroot\Start.aspx"; \
-    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/crdschurch/rock-docker-public/main/web.config" -OutFile "c:\inetpub\wwwroot\web.config"
+COPY app/RockWeb /inetpub/wwwroot
 
 # Cert
 RUN powershell -Command \

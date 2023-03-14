@@ -9,8 +9,8 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 
 WORKDIR /
 
-COPY scripts/express.ps1 .
-COPY scripts/sql.ps1 .
+COPY docker/scripts/express.ps1 .
+COPY docker/scripts/sql.ps1 .
 
 RUN & .\express.ps1 ; \
         Remove-Item express.ps1 ; \
