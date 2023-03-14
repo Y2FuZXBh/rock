@@ -21,4 +21,14 @@ Enable-WindowsOptionalFeature -Online -FeatureName Containers -NoRestart
 # circleci
 choco install circleci-cli -y
 
+<<<<<<< HEAD
 # add windows reboot check here
+=======
+### Outside of VMWare - You Can Use Linux Subsystem > Docker > Linux SQL Image (Offical)
+## IMPORTANT: Linux Subsystem /w No Default Distribution will Brake CircleCI Pipeline!
+#Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart
+#Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart
+#wsl.exe --install
+
+Restart-Computer -Force
+>>>>>>> dev
