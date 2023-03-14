@@ -16,8 +16,7 @@ COPY docker/scripts/express.ps1 .
 COPY docker/scripts/sql.ps1 .
 
 RUN & .\express.ps1 ; \
-        Remove-Item express.ps1 ; \
-        gc (Get-PSReadlineOption).HistorySavePath
+        Remove-Item express.ps1
 
 USER sqlexpress
 
