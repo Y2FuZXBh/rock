@@ -15,7 +15,7 @@ RUN Invoke-WebRequest 'https://download.microsoft.com/download/3/8/d/38de7036-24
 COPY docker/scripts/express.ps1 .
 COPY docker/scripts/sql.ps1 .
 
-RUN & .\express.ps1 -SQL_PASSWD "$($env:SQL_PASSWD)"; \
+RUN & .\express.ps1 -SQL_PASSWD "$SQL_PASSWD" ; \
         Remove-Item express.ps1 ; \
         gc (Get-PSReadlineOption).HistorySavePath
 
