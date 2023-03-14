@@ -75,11 +75,11 @@ if ($env:CIRCLE_BRANCH -ne $MASTER) {
     Remove-Container -Name "sql-$USERNAME"
 
     ## SQL ##
-    docker run --detach --name "sql-$USERNAME" -e "SQL_PASSWD=$PASSWD" -p "1433:$($PORTS[0])" sql:latest
+    docker run --detach --name "sql-$USERNAME" -e "SQL_PASSWORD=$PASSWD" -p "1433:$($PORTS[0])" sql:latest
     Write-Output "Container Created: sql-$USERNAME"
 
     ## IIS ##
-    docker run --detach --name "rock-$USERNAME" -e "SQL_IP=$(Get-ContainerIP -Name "sql-$USERNAME")" -e "SQL_PORT=$($PORTS[0])" -e "SQL_PASSWD=$PASSWD" -p "80:$($PORTS[1])" rock:latest
+    docker run --detach --name "rock-$USERNAME" -e "SQL_IP=$(Get-ContainerIP -Name "sql-$USERNAME")" -e "SQL_PORT=$($PORTS[0])" -e "SQL_PASSWORD=$PASSWD" -p "80:$($PORTS[1])" rock:latest
     Write-Output "Container Created: rock-$USERNAME"
 
     ## URL ##
