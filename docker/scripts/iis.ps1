@@ -1,9 +1,12 @@
 param(
   [Parameter(Mandatory = $false)]
+  [AllowEmptyString()]
   [string]$SQL_IP,
   [Parameter(Mandatory = $false)]
+  [AllowEmptyString()]
   [string]$SQL_Port,
   [Parameter(Mandatory = $false)]
+  [AllowEmptyString()]
   [string]$SQL_PASSWD
 )
 

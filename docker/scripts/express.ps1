@@ -1,5 +1,6 @@
 param(
     [Parameter(Mandatory = $false)]
+    [AllowEmptyString()]
     [string]$SQL_PASSWD
 )
 

@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
 LABEL maintainer "Y2FuZXBh"
 
-ENV SQL_PASSWORD="[NULL]"
+ENV SQL_PASSWORD="P@ssW0rd1234"
 
 EXPOSE 1433
 
