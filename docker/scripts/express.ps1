@@ -1,3 +1,4 @@
+$ProgressPreference = 'SilentlyContinue'
 $USERNAME = "sqlexpress"
 
 function New-Password($length, $minNonAlpha) {
