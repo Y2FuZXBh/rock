@@ -2,7 +2,8 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
 LABEL maintainer "Y2FuZXBh"
 
-ENV attach_dbs="[]"
+ENV SQL_PASSWORD="[NULL]"
+
 EXPOSE 1433
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
@@ -14,10 +15,10 @@ RUN Invoke-WebRequest 'https://download.microsoft.com/download/3/8/d/38de7036-24
 COPY docker/scripts/express.ps1 .
 COPY docker/scripts/sql.ps1 .
 
-RUN & .\express.ps1 ; \
+RUN & .\express.ps1 -SQL_PASSWD $env:SQL_PASSWD; \
         Remove-Item express.ps1 ; \
         gc (Get-PSReadlineOption).HistorySavePath
 
 USER sqlexpress
 
-CMD .\sql.ps1 -attach_dbs \"$env:attach_dbs\" -Verbose
+CMD .\sql.ps1 -Verbose

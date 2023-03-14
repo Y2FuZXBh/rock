@@ -4,8 +4,6 @@ param(
     [Parameter(Mandatory = $false)]
     [string]$SQL_Port,
     [Parameter(Mandatory = $false)]
-    [string]$SQL_User,
-    [Parameter(Mandatory = $false)]
     [string]$SQL_PASSWD
 )
 
@@ -21,7 +19,7 @@ Import-Module WebAdministration
 	    Data Source=$SQL_IP\$SQL_Port;
         Initial Catalog=bccrock;
         Network Library=DBMSSOCN;
-        User Id=$SQL_User;
+        User Id=sqlexpress;
         password=$SQL_PASSWD;
         Trusted_Connection=True;
         MultipleActiveResultSets=true"

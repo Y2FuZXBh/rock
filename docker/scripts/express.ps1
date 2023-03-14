@@ -1,3 +1,8 @@
+param(
+    [Parameter(Mandatory = $false)]
+    [string]$SQL_PASSWD
+)
+
 $ProgressPreference = 'SilentlyContinue'
 $USERNAME = "sqlexpress"
 
@@ -32,8 +37,7 @@ if (Get-LocalUser -Name $USERNAME -ErrorAction SilentlyContinue) {
   Remove-LocalUser -Name $USERNAME -Confirm:$false
 }
 
-$passwd = New-Password 127 57 # 45% int & special
-$passwdSecure = ConvertTo-SecureString -String $passwd -AsPlainText -Force
+$passwdSecure = ConvertTo-SecureString -String $SQL_PASSWD -AsPlainText -Force
 New-LocalUser $USERNAME -Password $passwdSecure -PasswordNeverExpires -AccountNeverExpires -UserMayNotChangePassword
 
 Start-Process ./sqlexpress/setup.exe "/IACCEPTSQLSERVERLICENSETERMS /Q /USESQLRECOMMENDEDMEMORYLIMITS /ACTION=install /TCPENABLED=1 /SECURITYMODE=SQL /FEATURES=SQL /INSTANCEID=SQLEXPRESS /INSTANCENAME=SQLEXPRESS /UPDATEENABLED=FALSE /SQLSYSADMINACCOUNTS=`"$env:COMPUTERNAME\$USERNAME`" /SAPWD='$passwdSecure'" -Wait
@@ -41,7 +45,7 @@ Start-Process ./sqlexpress/setup.exe "/IACCEPTSQLSERVERLICENSETERMS /Q /USESQLRE
 Remove-Item ("./sqlexpress", "./sqlexpress.exe") -Recurse -Force
 
 # Save As SYSTEM /f Ref
-[Environment]::SetEnvironmentVariable('PASSWD', $passwd, [System.EnvironmentVariableTarget]::User)
+#[Environment]::SetEnvironmentVariable('PASSWD', $SQL_PASSWD, [System.EnvironmentVariableTarget]::User)
 
 Stop-Service "MSSQL`$SQLEXPRESS"
 Set-ItemProperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql16.SQLEXPRESS\mssqlserver\supersocketnetlib\tcp\ipall' -name tcpdynamicports -value ''
